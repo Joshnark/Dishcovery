@@ -1,8 +1,9 @@
 package com.naranjo.dishcovery.domain.usecases
 
 import com.naranjo.dishcovery.domain.mocks.fakeRecipe
-import com.naranjo.dishcovery.domain.models.Recipe
+import com.naranjo.dishcovery.domain.entities.Recipe
 import com.naranjo.dishcovery.domain.repositories.FavoritesRepository
+import com.naranjo.dishcovery.interactor.favorites.AddFavoriteUseCase
 import kotlinx.coroutines.runBlocking
 import org.junit.Before
 import org.junit.Test

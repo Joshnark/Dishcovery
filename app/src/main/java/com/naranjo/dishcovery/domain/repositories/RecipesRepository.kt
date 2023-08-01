@@ -1,6 +1,6 @@
 package com.naranjo.dishcovery.domain.repositories
 
-import com.naranjo.dishcovery.domain.models.Recipe
+import com.naranjo.dishcovery.domain.entities.Recipe
 
 interface RecipesRepository {
 
@@ -8,7 +8,7 @@ interface RecipesRepository {
 
     suspend fun getPopularRecipes(): List<Recipe>
 
-    suspend fun getRecipesByCategory(): List<Recipe>
+    suspend fun getRecipesByCategory(category: String): List<Recipe>
 
     suspend fun getRecipeById(id: Int): Recipe
 

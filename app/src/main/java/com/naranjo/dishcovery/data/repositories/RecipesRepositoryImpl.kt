@@ -1,7 +1,7 @@
 package com.naranjo.dishcovery.data.repositories
 
 import com.naranjo.dishcovery.data.datasources.RecipesDataSource
-import com.naranjo.dishcovery.domain.models.Recipe
+import com.naranjo.dishcovery.domain.entities.Recipe
 import com.naranjo.dishcovery.domain.repositories.RecipesRepository
 
 class RecipesRepositoryImpl(
@@ -14,8 +14,8 @@ class RecipesRepositoryImpl(
     override suspend fun getPopularRecipes(): List<Recipe>  =
         recipesDataSource.getPopularRecipes()
 
-    override suspend fun getRecipesByCategory(): List<Recipe> =
-        recipesDataSource.getRecipesByCategory()
+    override suspend fun getRecipesByCategory(category: String): List<Recipe> =
+        recipesDataSource.getRecipesByCategory(category)
 
     override suspend fun getRecipeById(id: Int) =
         recipesDataSource.getRecipeById(id)

@@ -2,6 +2,7 @@ package com.naranjo.dishcovery.domain.usecases
 
 import com.naranjo.dishcovery.domain.mocks.fakeRecipe
 import com.naranjo.dishcovery.domain.repositories.RecipesRepository
+import com.naranjo.dishcovery.interactor.recipes.GetRecipeByIdUseCase
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert
 import org.junit.Before

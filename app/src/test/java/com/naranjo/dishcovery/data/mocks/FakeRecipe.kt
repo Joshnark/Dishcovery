@@ -1,12 +1,12 @@
 package com.naranjo.dishcovery.data.mocks
 
-import com.naranjo.dishcovery.domain.models.AnalyzedInstruction
-import com.naranjo.dishcovery.domain.models.Equipment
-import com.naranjo.dishcovery.domain.models.Ingredient
-import com.naranjo.dishcovery.domain.models.Length
-import com.naranjo.dishcovery.domain.models.Location
-import com.naranjo.dishcovery.domain.models.Recipe
-import com.naranjo.dishcovery.domain.models.Step
+import com.naranjo.dishcovery.domain.entities.AnalyzedInstruction
+import com.naranjo.dishcovery.domain.entities.Equipment
+import com.naranjo.dishcovery.domain.entities.Ingredient
+import com.naranjo.dishcovery.domain.entities.Length
+import com.naranjo.dishcovery.domain.entities.Location
+import com.naranjo.dishcovery.domain.entities.Recipe
+import com.naranjo.dishcovery.domain.entities.Step
 
 internal val fakeRecipe = Recipe(
     vegetarian = true,

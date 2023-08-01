@@ -2,6 +2,7 @@ package com.naranjo.dishcovery.domain.usecases
 
 import com.naranjo.dishcovery.domain.mocks.fakeRecipe
 import com.naranjo.dishcovery.domain.repositories.FavoritesRepository
+import com.naranjo.dishcovery.interactor.favorites.GetFavoritesUseCase
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert
 import org.junit.Before
@@ -38,5 +39,4 @@ class GetFavoritesUseCaseTest {
         doThrow(Exception()).`when`(mockFavoritesRepository).getFavorites()
         sut.invoke()
     }
-
 }

@@ -2,7 +2,7 @@ package com.naranjo.dishcovery.data.repositories
 
 import com.naranjo.dishcovery.data.datasources.FavoritesDataSource
 import com.naranjo.dishcovery.domain.mocks.fakeRecipe
-import com.naranjo.dishcovery.domain.models.Recipe
+import com.naranjo.dishcovery.domain.entities.Recipe
 import com.naranjo.dishcovery.domain.repositories.FavoritesRepository
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert
@@ -13,8 +13,10 @@ import org.mockito.ArgumentCaptor
 import org.mockito.Captor
 import org.mockito.Mock
 import org.mockito.junit.MockitoJUnitRunner
+import org.mockito.kotlin.any
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.doThrow
+import org.mockito.kotlin.verify
 
 @RunWith(MockitoJUnitRunner::class)
 class FavoritesRepositoryTest {
@@ -41,6 +43,18 @@ class FavoritesRepositoryTest {
     @Test(expected = Exception::class)
     fun `On addFavorite invoked Given failure fetching data Throws error`(): Unit = runBlocking {
         doThrow(Exception()).`when`(favoritesDataSource).addFavorite(recipeArgumentCaptor.capture() ?: fakeRecipe)
+        sut.addFavorite(fakeRecipe)
+    }
+
+    @Test
+    fun `On removeFavorite invoked Given success fetching data Executes datasource addFavorite`(): Unit = runBlocking {
+        doReturn(Unit).`when`(favoritesDataSource).removeFavorite(recipeArgumentCaptor.capture() ?: fakeRecipe)
+        sut.removeFavorite(fakeRecipe)
+    }
+
+    @Test(expected = Exception::class)
+    fun `On removeFavorite invoked Given failure fetching data Throws error`(): Unit = runBlocking {
+        doThrow(Exception()).`when`(favoritesDataSource).removeFavorite(recipeArgumentCaptor.capture() ?: fakeRecipe)
         sut.addFavorite(fakeRecipe)
     }
 

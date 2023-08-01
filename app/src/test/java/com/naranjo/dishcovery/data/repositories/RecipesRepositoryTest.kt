@@ -25,6 +25,9 @@ class RecipesRepositoryTest {
     @Captor
     private lateinit var idArgumentCaptor: ArgumentCaptor<Int>
 
+    @Captor
+    private lateinit var categoryArgumentCaptor: ArgumentCaptor<String>
+
     private lateinit var sut: RecipesRepository
 
     @Before
@@ -76,15 +79,15 @@ class RecipesRepositoryTest {
     @Test
     fun `On getRecipesByCategory Given success fetching data Returns Recipe List`() = runBlocking {
         val fakeResult = List(10) { _ -> fakeRecipe }
-        doReturn(fakeResult).`when`(mockRecipesDataSource).getRecipesByCategory()
-        val result = sut.getRecipesByCategory()
+        doReturn(fakeResult).`when`(mockRecipesDataSource).getRecipesByCategory(categoryArgumentCaptor.capture().orEmpty())
+        val result = sut.getRecipesByCategory("1")
         Assert.assertArrayEquals(fakeResult.toTypedArray(), result.toTypedArray())
     }
 
     @Test(expected = Exception::class)
     fun `On getRecipesByCategory Given failure fetching data Throws error`(): Unit = runBlocking {
-        doThrow(Exception()).`when`(mockRecipesDataSource).getRecipesByCategory()
-        sut.getRecipesByCategory()
+        doThrow(Exception()).`when`(mockRecipesDataSource).getRecipesByCategory(categoryArgumentCaptor.capture().orEmpty())
+        sut.getRecipesByCategory("1")
     }
 
 }
