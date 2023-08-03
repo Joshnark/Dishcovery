@@ -21,41 +21,64 @@ import androidx.compose.material3.TabRowDefaults
 import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.naranjo.dishcovery.R
 import com.naranjo.dishcovery.ui.screens.main.models.PageData
+import com.naranjo.dishcovery.ui.screens.main.pages.favorite.FavoritesIntent
+import com.naranjo.dishcovery.ui.screens.main.pages.favorite.FavoritesScreen
+import com.naranjo.dishcovery.ui.screens.main.pages.favorite.FavoritesViewModel
+import com.naranjo.dishcovery.ui.screens.main.pages.home.HomeIntent
 import com.naranjo.dishcovery.ui.screens.main.pages.home.HomeScreen
+import com.naranjo.dishcovery.ui.screens.main.pages.home.HomeViewModel
+import com.naranjo.dishcovery.ui.screens.main.pages.search.SearchIntent
+import com.naranjo.dishcovery.ui.screens.main.pages.search.SearchScreen
+import com.naranjo.dishcovery.ui.screens.main.pages.search.SearchViewModel
 import com.naranjo.dishcovery.ui.theme.NANO
 import com.naranjo.dishcovery.ui.theme.TINY
 import com.naranjo.dishcovery.ui.views.SmallSpacer
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 private const val ICON_SIZE = 20
 
-@OptIn(ExperimentalFoundationApi::class)
+private const val SEARCH_SCREEN_INDEX = 0
+private const val HOME_SCREEN_INDEX = 1
+private const val FAVORITES_SCREEN_INDEX = 2
+
+@OptIn(ExperimentalFoundationApi::class, ExperimentalStdlibApi::class)
 @Composable
-fun MainScreen() {
-    val pageData = listOf(
-        PageData(
+fun MainScreen(viewModel: MainViewModel = viewModel()) {
+
+    val pageData = mapOf(
+        SEARCH_SCREEN_INDEX to PageData(
             outlineIcon = R.drawable.ic_search,
             selectedIcon = R.drawable.ic_search_selected,
-            screen = { Text("1") }
+            screen = { SearchScreen() }
         ),
-        PageData(
+        HOME_SCREEN_INDEX to PageData(
             outlineIcon = R.drawable.ic_home,
             selectedIcon = R.drawable.ic_home_selected,
-            screen = { HomeScreen() }
+            screen = { HomeScreen(onRecipeTap = { recipe ->
+                viewModel.navigate(MainFragmentDirections.actionMainFragmentToDetailFragment(recipe.id))
+            }) }
         ),
-        PageData(
+        FAVORITES_SCREEN_INDEX to PageData(
             outlineIcon = R.drawable.ic_like,
             selectedIcon = R.drawable.ic_like_selected,
-            screen = { Text("3") }
+            screen = { FavoritesScreen() }
         )
     )
 
@@ -63,8 +86,16 @@ fun MainScreen() {
         pageCount = {
             pageData.size
         },
-        initialPage = pageData.size / 2
+        initialPage = HOME_SCREEN_INDEX
     )
+
+    LaunchedEffect(Unit) {
+        viewModel.pagerChange.collect { page ->
+            if (page in 0 ..< pagerState.pageCount) {
+                pagerState.animateScrollToPage(page)
+            }
+        }
+    }
 
     Scaffold(
         bottomBar = {
@@ -79,14 +110,20 @@ fun MainScreen() {
             modifier = Modifier.padding(padding),
             userScrollEnabled = false
         ) { pageIndex ->
-            pageData[pageIndex].screen()
+            pageData[pageIndex]?.screen?.invoke()
         }
     }
 }
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun TabBar(pagerState: PagerState, pageData: List<PageData>) {
+fun TabBar(
+    pagerState: PagerState,
+    pageData: Map<Int, PageData>,
+    homeViewModel: HomeViewModel = viewModel(),
+    searchViewModel: SearchViewModel = viewModel(),
+    favoritesViewModel: FavoritesViewModel = viewModel()
+) {
     val scope = rememberCoroutineScope()
 
     TabRow(
@@ -104,11 +141,12 @@ fun TabBar(pagerState: PagerState, pageData: List<PageData>) {
                 elevation = TINY.dp
             )
     ) {
-        pageData.forEachIndexed { index, value ->
+        pageData.forEach { (index, value) ->
             Tab(
                 selected = pagerState.currentPage == index,
                 onClick = {
                     scope.launch {
+                        updateScreens(index, scope, homeViewModel, searchViewModel, favoritesViewModel)
                         pagerState.animateScrollToPage(index)
                     }
                 },
@@ -138,6 +176,22 @@ fun TabBar(pagerState: PagerState, pageData: List<PageData>) {
                         SmallSpacer()
                     }
                 })
+        }
+    }
+}
+
+private fun updateScreens(
+    index: Int,
+    scope: CoroutineScope,
+    homeViewModel: HomeViewModel,
+    searchViewModel: SearchViewModel,
+    favoritesViewModel: FavoritesViewModel
+) {
+    scope.launch {
+        when(index) {
+            SEARCH_SCREEN_INDEX -> searchViewModel.intent.send(SearchIntent.SearchRecipes(load = false))
+            HOME_SCREEN_INDEX -> homeViewModel.intent.send(HomeIntent.GetRecipes(load = false))
+            FAVORITES_SCREEN_INDEX -> favoritesViewModel.intent.send(FavoritesIntent.GetFavorites(load = false))
         }
     }
 }

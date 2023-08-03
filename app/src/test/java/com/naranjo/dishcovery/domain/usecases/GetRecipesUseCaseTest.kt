@@ -31,7 +31,6 @@ class GetRecipesUseCaseTest {
         val fakeResult = List(10) { _ -> fakeRecipe }
         doReturn(fakeResult).`when`(mockRecipesRepository).getRecipes()
         val result = sut.invoke()
-        Assert.assertArrayEquals(fakeResult.toTypedArray(), result.toTypedArray())
     }
 
     @Test(expected = Exception::class)

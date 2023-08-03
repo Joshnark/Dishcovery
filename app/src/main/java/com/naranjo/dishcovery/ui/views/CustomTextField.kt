@@ -18,13 +18,15 @@ import androidx.compose.ui.unit.sp
 
 @Composable
 fun CustomTextField(
-    state: MutableState<String>,
+    text: String,
     modifier: Modifier = Modifier,
     placeholder: String,
     paddingLeadingIconEnd: Dp = 0.dp,
     paddingTrailingIconStart: Dp = 0.dp,
+    readOnly: Boolean = false,
     leadingIcon: (@Composable() () -> Unit)? = null,
-    trailingIcon: (@Composable() () -> Unit)? = null
+    trailingIcon: (@Composable() () -> Unit)? = null,
+    onValueChange: (String) -> Unit = {},
 ) {
     Row(modifier = modifier, verticalAlignment = Alignment.CenterVertically) {
         if (leadingIcon != null) {
@@ -36,12 +38,13 @@ fun CustomTextField(
                 .padding(start = paddingLeadingIconEnd, end = paddingTrailingIconStart)
         ) {
             BasicTextField(
-                value = state.value,
-                onValueChange = { state.value = it },
+                value = text,
+                onValueChange = onValueChange,
+                readOnly = readOnly,
                 textStyle = TextStyle(fontSize = 14.sp, color = MaterialTheme.colorScheme.onSurface),
             )
 
-            if (state.value.isEmpty()) {
+            if (text.isEmpty()) {
                 Text(
                     text = placeholder,
                     style = TextStyle(fontSize = 14.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)

@@ -6,8 +6,6 @@ import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterF
 import com.naranjo.dishcovery.BuildConfig
 import com.naranjo.dishcovery.data.datasources.FavoritesDataSource
 import com.naranjo.dishcovery.data.datasources.RecipesDataSource
-import com.naranjo.dishcovery.data.repositories.RecipesRepositoryImpl
-import com.naranjo.dishcovery.domain.repositories.RecipesRepository
 import com.naranjo.dishcovery.framework.datasources.FavoritesDataSourceImpl
 import com.naranjo.dishcovery.framework.datasources.RecipesDataSourceImpl
 import com.naranjo.dishcovery.framework.network.RecipesApi
@@ -17,9 +15,11 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import javax.inject.Singleton
+
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -29,8 +29,13 @@ object FrameworkModule {
 
     @Provides
     fun providesRetrofit(): Retrofit {
+        val interceptor = HttpLoggingInterceptor()
+        interceptor.setLevel(HttpLoggingInterceptor.Level.BODY)
+        val client = OkHttpClient.Builder().addInterceptor(interceptor).build()
+
         return Retrofit
             .Builder()
+            .client(client)
             .baseUrl(BuildConfig.BASE_URL)
             .addConverterFactory(GsonConverterFactory.create())
             .addCallAdapterFactory(CoroutineCallAdapterFactory())

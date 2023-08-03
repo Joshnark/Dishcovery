@@ -9,5 +9,7 @@ interface RecipesDataSource {
 
     suspend fun getRecipesByCategory(category: String): List<Recipe>
 
+    suspend fun searchRecipes(keyword: String): List<Recipe>
+
     suspend fun getRecipeById(id: Int): Recipe
 }

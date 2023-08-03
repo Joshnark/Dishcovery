@@ -29,9 +29,9 @@ class GetFavoritesUseCaseTest {
     @Test
     fun `On getFavorites invoked Given success fetching data Returns Recipe List`() = runBlocking {
         val fakeResult = List(10) { _ -> fakeRecipe }
-        doReturn(fakeResult).`when`(mockFavoritesRepository).getFavorites()
+        doReturn(Result.success(fakeResult)).`when`(mockFavoritesRepository).getFavorites()
         val result = sut.invoke()
-        Assert.assertArrayEquals(fakeResult.toTypedArray(), result.toTypedArray())
+        Assert.assertArrayEquals(result.getOrThrow().toTypedArray(), fakeResult.toTypedArray())
     }
 
     @Test(expected = Exception::class)

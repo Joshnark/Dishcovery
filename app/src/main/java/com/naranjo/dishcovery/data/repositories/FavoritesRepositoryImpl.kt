@@ -8,13 +8,24 @@ class FavoritesRepositoryImpl(
     private val favoritesDataSource: FavoritesDataSource
 ): FavoritesRepository {
 
-    override suspend fun addFavorite(recipe: Recipe) =
-        favoritesDataSource.addFavorite(recipe)
+    override suspend fun changeFavorite(recipe: Recipe): Result<Boolean> {
+        return runCatching {
+            val isRecipeAddedToFavorites = favoritesDataSource.getRecipe(recipe).isNotEmpty()
 
-    override suspend fun removeFavorite(recipe: Recipe) =
-        favoritesDataSource.removeFavorite(recipe)
+            if (isRecipeAddedToFavorites) {
+                favoritesDataSource.removeFavorite(recipe)
+                false
+            } else {
+                favoritesDataSource.addFavorite(recipe)
+                true
+            }
+        }
+    }
 
-    override suspend fun getFavorites(): List<Recipe> =
-        favoritesDataSource.getFavorites()
+    override suspend fun getFavorites(): Result<List<Recipe>> {
+        return runCatching {
+            favoritesDataSource.getFavorites().map { it.copy(isFavorite = true) }
+        }
+    }
 
 }

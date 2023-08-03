@@ -16,8 +16,8 @@ import dagger.hilt.components.SingletonComponent
 object DataModule {
 
     @Provides
-    fun providesRecipesRepository(recipesDataSource: RecipesDataSource): RecipesRepository {
-        return RecipesRepositoryImpl(recipesDataSource)
+    fun providesRecipesRepository(recipesDataSource: RecipesDataSource, favoritesDataSource: FavoritesDataSource): RecipesRepository {
+        return RecipesRepositoryImpl(recipesDataSource, favoritesDataSource)
     }
 
     @Provides

@@ -9,6 +9,7 @@ import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -17,11 +18,15 @@ import androidx.constraintlayout.widget.Placeholder
 import com.naranjo.dishcovery.ui.theme.SMALL
 
 @Composable
-fun SearchTextField(placeholder: String, modifier: Modifier) {
-    val textState = remember { mutableStateOf("") }
-
+fun SearchTextField(
+    text: String,
+    placeholder: String,
+    modifier: Modifier = Modifier,
+    readOnly: Boolean = false,
+    onValueChanged: (String) -> Unit = {}
+) {
     CustomTextField(
-        state = textState,
+        text = text,
         paddingLeadingIconEnd = 10.dp,
         paddingTrailingIconStart = 10.dp,
         modifier = Modifier
@@ -36,11 +41,13 @@ fun SearchTextField(placeholder: String, modifier: Modifier) {
             )
             .then(modifier),
         placeholder = placeholder,
+        readOnly = readOnly,
         trailingIcon = {
             Icon(
                 imageVector = Icons.Filled.Search,
                 contentDescription = null
             )
-        }
+        },
+        onValueChange = onValueChanged
     )
 }

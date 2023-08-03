@@ -6,7 +6,7 @@ import com.naranjo.dishcovery.domain.repositories.RecipesRepository
 class GetRecipesByCategoryUseCase(
     private val recipesRepository: RecipesRepository
 ) {
-    suspend operator fun invoke(category: String): List<Recipe> {
+    suspend operator fun invoke(category: String): Result<List<Recipe>> {
         return recipesRepository.getRecipesByCategory(category)
     }
 }

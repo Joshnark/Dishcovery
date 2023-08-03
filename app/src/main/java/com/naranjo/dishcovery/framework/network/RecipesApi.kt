@@ -9,13 +9,14 @@ import retrofit2.http.Query
 interface RecipesApi {
 
     @GET(RECIPES_PATH)
-    fun getRecipes(
+    suspend fun getRecipes(
         @Query(CATEGORY_QUERY) category: String? = null,
+        @Query(KEYWORD_QUERY) keyword: String? = null,
         @Query(POPULAR_QUERY) isPopular: Boolean? = null
     ): Response<List<Recipe>>
 
     @GET(RECIPE_PATH)
-    fun getRecipeById(
+    suspend fun getRecipeById(
         @Path("id") id: Int
     ): Response<Recipe>
 
@@ -25,6 +26,7 @@ interface RecipesApi {
 
         private const val CATEGORY_QUERY = "category"
         private const val POPULAR_QUERY = "popular"
+        private const val KEYWORD_QUERY = "keyword"
     }
 
 }

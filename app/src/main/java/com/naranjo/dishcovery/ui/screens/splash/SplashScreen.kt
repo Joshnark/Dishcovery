@@ -29,7 +29,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.naranjo.dishcovery.R
-import com.naranjo.dishcovery.ui.views.BigSpacer
+import com.naranjo.dishcovery.ui.views.LargeSpacer
 import com.naranjo.dishcovery.ui.views.GradientBox
 
 private const val BOTTOM_SEPARATION = 50
@@ -57,7 +57,7 @@ fun SplashScreen() {
 }
 
 @Composable
-fun Header() {
+private fun Header() {
     val offset = Offset(.0f, 5.0f)
 
     val labelStyle = TextStyle(
@@ -98,7 +98,7 @@ fun Header() {
 }
 
 @Composable
-fun Footer() {
+private fun Footer() {
     val titleStyle = TextStyle(
         color = Color.White,
         fontSize = 45.sp
@@ -119,7 +119,7 @@ fun Footer() {
             style = titleStyle
         )
 
-        BigSpacer()
+        LargeSpacer()
 
         Text(
             text = "Make your own food",
@@ -131,7 +131,7 @@ fun Footer() {
             style = captionsStyle
         )
 
-        BigSpacer()
+        LargeSpacer()
 
         StartButton()
 
@@ -141,10 +141,10 @@ fun Footer() {
 }
 
 @Composable
-fun StartButton(viewModel: SplashViewModel = viewModel()) {
+private fun StartButton(viewModel: SplashViewModel = viewModel()) {
     Button(
         onClick = {
-            viewModel.navigate(SplashFragmentDirections.actionSplashFragmentToHomeFragment())
+            viewModel.navigate(SplashFragmentDirections.actionSplashFragmentToMainFragment())
         }
     ) {
         Text(text = "Start cooking!")
@@ -153,6 +153,6 @@ fun StartButton(viewModel: SplashViewModel = viewModel()) {
 
 @Preview
 @Composable
-fun PreviewSplashScreen() {
+private fun PreviewSplashScreen() {
     SplashScreen()
 }

@@ -4,12 +4,15 @@ import com.naranjo.dishcovery.domain.entities.Recipe
 
 interface RecipesRepository {
 
-    suspend fun getRecipes(): List<Recipe>
+    suspend fun getRecipes(): Result<List<Recipe>>
 
-    suspend fun getPopularRecipes(): List<Recipe>
+    suspend fun getPopularRecipes(): Result<List<Recipe>>
 
-    suspend fun getRecipesByCategory(category: String): List<Recipe>
+    suspend fun getRecipesByCategory(category: String): Result<List<Recipe>>
 
-    suspend fun getRecipeById(id: Int): Recipe
+    suspend fun searchRecipes(keyword: String): Result<List<Recipe>>
+
+    suspend fun getRecipeById(id: Int): Result<Recipe>
+
 
 }

@@ -35,35 +35,24 @@ class FavoritesRepositoryTest {
     }
 
     @Test
-    fun `On addFavorite invoked Given success fetching data Executes datasource addFavorite`() = runBlocking {
+    fun `On changeFavorite invoked Given success fetching data Executes datasource addFavorite`(): Unit = runBlocking {
         doReturn(Unit).`when`(favoritesDataSource).addFavorite(recipeArgumentCaptor.capture() ?: fakeRecipe)
-        sut.addFavorite(fakeRecipe)
+        sut.changeFavorite(fakeRecipe)
     }
 
     @Test(expected = Exception::class)
-    fun `On addFavorite invoked Given failure fetching data Throws error`(): Unit = runBlocking {
+    fun `On changeFavorite invoked Given failure fetching data Throws error`(): Unit = runBlocking {
         doThrow(Exception()).`when`(favoritesDataSource).addFavorite(recipeArgumentCaptor.capture() ?: fakeRecipe)
-        sut.addFavorite(fakeRecipe)
+        sut.changeFavorite(fakeRecipe)
     }
 
-    @Test
-    fun `On removeFavorite invoked Given success fetching data Executes datasource addFavorite`(): Unit = runBlocking {
-        doReturn(Unit).`when`(favoritesDataSource).removeFavorite(recipeArgumentCaptor.capture() ?: fakeRecipe)
-        sut.removeFavorite(fakeRecipe)
-    }
-
-    @Test(expected = Exception::class)
-    fun `On removeFavorite invoked Given failure fetching data Throws error`(): Unit = runBlocking {
-        doThrow(Exception()).`when`(favoritesDataSource).removeFavorite(recipeArgumentCaptor.capture() ?: fakeRecipe)
-        sut.addFavorite(fakeRecipe)
-    }
 
     @Test
     fun `On getFavorites invoked Given success fetching data Returns Recipe List`() = runBlocking {
         val fakeResult = List(10) { _ -> fakeRecipe }
         doReturn(fakeResult).`when`(favoritesDataSource).getFavorites()
         val result = sut.getFavorites()
-        Assert.assertArrayEquals(fakeResult.toTypedArray(), result.toTypedArray())
+        Assert.assertEquals(Result.success(fakeResult), result)
     }
 
     @Test(expected = Exception::class)

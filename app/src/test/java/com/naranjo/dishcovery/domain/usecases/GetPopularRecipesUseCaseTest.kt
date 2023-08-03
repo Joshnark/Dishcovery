@@ -29,9 +29,9 @@ class GetPopularRecipesUseCaseTest {
     @Test
     fun `On getPopularRecipes invoked Given success fetching data Returns Recipe List`() = runBlocking {
         val fakeResult = List(10) { _ -> fakeRecipe }
-        doReturn(fakeResult).`when`(mockRecipesRepository).getPopularRecipes()
+        doReturn(Result.success(fakeResult)).`when`(mockRecipesRepository).getPopularRecipes()
         val result = sut.invoke()
-        Assert.assertArrayEquals(fakeResult.toTypedArray(), result.toTypedArray())
+        Assert.assertArrayEquals(result.getOrThrow().toTypedArray(), fakeResult.toTypedArray())
     }
 
     @Test(expected = Exception::class)

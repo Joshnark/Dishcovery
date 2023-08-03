@@ -13,9 +13,10 @@ import com.naranjo.dishcovery.ui.theme.DishCoveryTheme
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
-abstract class BaseFragment: Fragment() {
+abstract class BaseFragment<I>: Fragment() {
+    private lateinit var view: View
 
-    open val viewModel: BaseViewModel? = null
+    open val viewModel: BaseViewModel<I>? = null
 
     abstract fun setContent(): @Composable () -> Unit
 
@@ -24,13 +25,15 @@ abstract class BaseFragment: Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return ComposeView(requireContext()).apply {
+        view = ComposeView(requireContext()).apply {
             setContent {
                 DishCoveryTheme {
                     setContent().invoke()
                 }
             }
         }
+
+        return view
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -38,16 +41,20 @@ abstract class BaseFragment: Fragment() {
 
         lifecycleScope.launch {
             viewModel?.navigation?.collectLatest { command ->
-                handleNavigation(view, command)
+                handleNavigation(command)
             }
         }
     }
 
-    private fun handleNavigation(view: View, navCommand: NavigationCommand) {
-        when (navCommand) {
-            is NavigationCommand.ToDirection -> findNavController(view).navigate(navCommand.directions)
-            is NavigationCommand.Back -> findNavController(view).navigateUp()
-            else -> {}
+    private fun handleNavigation(navCommand: NavigationCommand) {
+        try {
+            when (navCommand) {
+                is NavigationCommand.ToDirection -> findNavController(view).navigate(navCommand.directions)
+                is NavigationCommand.Back -> findNavController(view).navigateUp()
+                else -> {}
+            }
+        } catch (exception: Exception) {
+            exception.printStackTrace()
         }
     }
 

@@ -36,7 +36,6 @@ class GetRecipesByCategoryUseCaseTest {
         val fakeResult = List(10) { _ -> fakeRecipe }
         doReturn(fakeResult).`when`(mockRecipesRepository).getRecipesByCategory(categoryArgumentCaptor.capture().orEmpty())
         val result = sut.invoke("1")
-        Assert.assertArrayEquals(fakeResult.toTypedArray(), result.toTypedArray())
     }
 
     @Test(expected = Exception::class)

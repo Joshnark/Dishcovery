@@ -19,4 +19,7 @@ class FavoritesDataSourceImpl(
 
     override suspend fun getFavorites(): List<Recipe> =
         favoriteRecipesDao.selectAll().map(RecipeEntity::toRecipe)
+
+    override suspend fun getRecipe(recipe: Recipe): List<Recipe> =
+        favoriteRecipesDao.select(recipe.id).map(RecipeEntity::toRecipe)
 }

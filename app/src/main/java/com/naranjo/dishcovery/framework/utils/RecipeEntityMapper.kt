@@ -37,7 +37,8 @@ fun RecipeEntity.toRecipe(): Recipe {
         diets = emptyList(),
         dishTypes = emptyList(),
         occasions = emptyList(),
-        location = Location(.0,.0)
+        location = Location(.0,.0),
+        isFavorite = false
     )
 }
 

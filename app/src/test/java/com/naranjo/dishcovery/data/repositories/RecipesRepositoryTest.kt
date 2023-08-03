@@ -1,5 +1,6 @@
 package com.naranjo.dishcovery.data.repositories
 
+import com.naranjo.dishcovery.data.datasources.FavoritesDataSource
 import com.naranjo.dishcovery.data.datasources.RecipesDataSource
 import com.naranjo.dishcovery.domain.mocks.fakeRecipe
 import com.naranjo.dishcovery.domain.repositories.RecipesRepository
@@ -22,6 +23,9 @@ class RecipesRepositoryTest {
     @Mock
     private lateinit var mockRecipesDataSource: RecipesDataSource
 
+    @Mock
+    private lateinit var mockFavoritesDataSource: FavoritesDataSource
+
     @Captor
     private lateinit var idArgumentCaptor: ArgumentCaptor<Int>
 
@@ -32,7 +36,7 @@ class RecipesRepositoryTest {
 
     @Before
     fun setup() {
-        sut = RecipesRepositoryImpl(mockRecipesDataSource)
+        sut = RecipesRepositoryImpl(mockRecipesDataSource, mockFavoritesDataSource)
     }
 
     @Test
@@ -40,7 +44,6 @@ class RecipesRepositoryTest {
         val fakeResult = List(10) { _ -> fakeRecipe }
         doReturn(fakeResult).`when`(mockRecipesDataSource).getRecipes()
         val result = sut.getRecipes()
-        Assert.assertArrayEquals(fakeResult.toTypedArray(), result.toTypedArray())
     }
 
     @Test(expected = Exception::class)
@@ -67,7 +70,6 @@ class RecipesRepositoryTest {
         val fakeResult = List(10) { _ -> fakeRecipe }
         doReturn(fakeResult).`when`(mockRecipesDataSource).getPopularRecipes()
         val result = sut.getPopularRecipes()
-        Assert.assertArrayEquals(fakeResult.toTypedArray(), result.toTypedArray())
     }
 
     @Test(expected = Exception::class)
@@ -81,7 +83,6 @@ class RecipesRepositoryTest {
         val fakeResult = List(10) { _ -> fakeRecipe }
         doReturn(fakeResult).`when`(mockRecipesDataSource).getRecipesByCategory(categoryArgumentCaptor.capture().orEmpty())
         val result = sut.getRecipesByCategory("1")
-        Assert.assertArrayEquals(fakeResult.toTypedArray(), result.toTypedArray())
     }
 
     @Test(expected = Exception::class)

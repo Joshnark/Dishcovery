@@ -17,4 +17,7 @@ interface FavoriteRecipesDao {
     @Query("SELECT * FROM recipes")
     suspend fun selectAll(): List<RecipeEntity>
 
+    @Query("SELECT * FROM recipes WHERE id = :id")
+    suspend fun select(id: Int): List<RecipeEntity>
+
 }

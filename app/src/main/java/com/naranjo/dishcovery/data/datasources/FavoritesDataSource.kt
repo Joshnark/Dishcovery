@@ -8,4 +8,6 @@ interface FavoritesDataSource {
     suspend fun removeFavorite(recipe: Recipe)
 
     suspend fun getFavorites(): List<Recipe>
+
+    suspend fun getRecipe(recipe: Recipe): List<Recipe>
 }

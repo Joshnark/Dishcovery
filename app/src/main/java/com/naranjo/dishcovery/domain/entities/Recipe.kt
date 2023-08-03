@@ -1,12 +1,16 @@
 package com.naranjo.dishcovery.domain.entities
 
+import android.os.Parcelable
+import kotlinx.parcelize.Parcelize
+
+@Parcelize
 data class Recipe(
     val aggregateLikes: Int,
     val analyzedInstructions: List<AnalyzedInstruction>,
     val cheap: Boolean,
     val cookingMinutes: Int,
     val creditsText: String,
-    val cuisines: List<Any>,
+    val cuisines: List<String>,
     val dairyFree: Boolean,
     val diets: List<String>,
     val dishTypes: List<String>,
@@ -17,7 +21,7 @@ data class Recipe(
     val image: String,
     val imageType: String,
     val lowFodmap: Boolean,
-    val occasions: List<Any>,
+    val occasions: List<String>,
     val preparationMinutes: Int,
     val pricePerServing: Double,
     val readyInMinutes: Int,
@@ -32,5 +36,6 @@ data class Recipe(
     val veryHealthy: Boolean,
     val veryPopular: Boolean,
     val weightWatcherSmartPoints: Int,
-    val location: Location,
-)
+    val location: Location?,
+    val isFavorite: Boolean?
+): Parcelable

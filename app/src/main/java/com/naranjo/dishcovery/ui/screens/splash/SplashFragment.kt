@@ -7,7 +7,7 @@ import com.naranjo.dishcovery.ui.screens.base.BaseFragment
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class SplashFragment: BaseFragment() {
+class SplashFragment: BaseFragment<Void>() {
 
     override val viewModel: SplashViewModel by viewModels()
 

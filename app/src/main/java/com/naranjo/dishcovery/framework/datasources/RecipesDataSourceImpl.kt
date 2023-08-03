@@ -9,19 +9,25 @@ class RecipesDataSourceImpl(
 ): RecipesDataSource {
 
     override suspend fun getRecipes(): List<Recipe> {
-        return recipesApi.getRecipes().data
+        return recipesApi.getRecipes().data.distinctBy { it.id }
     }
 
     override suspend fun getPopularRecipes(): List<Recipe> {
         return recipesApi.getRecipes(
             isPopular = true
-        ).data
+        ).data.distinctBy { it.id }
     }
 
     override suspend fun getRecipesByCategory(category: String): List<Recipe> {
         return recipesApi.getRecipes(
             category = category
-        ).data
+        ).data.distinctBy { it.id }
+    }
+
+    override suspend fun searchRecipes(keyword: String): List<Recipe> {
+        return recipesApi.getRecipes(
+            keyword = keyword
+        ).data.distinctBy { it.id }
     }
 
     override suspend fun getRecipeById(id: Int): Recipe {

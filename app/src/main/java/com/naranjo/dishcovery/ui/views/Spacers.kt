@@ -31,6 +31,6 @@ fun MediumSpacer() {
 }
 
 @Composable
-fun BigSpacer() {
+fun LargeSpacer() {
     Spacer(modifier = Modifier.size(LARGE.dp))
 }

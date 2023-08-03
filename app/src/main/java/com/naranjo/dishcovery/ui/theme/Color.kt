@@ -18,7 +18,7 @@ val Surface = Color(0xFFFFFFFF)
 val Background = Color(0xFFF0F0F0)
 
 val onSurface = Color(0xFF000000)
-val onSurfaceVariant = Color(0xFF555555)
+val onSurfaceVariant = Color(0xFF888888)
 
 val SemiTransparentBlack = Color(0xAA000000)
 val SemiTransparentBlack50 = Color(0x55000000)

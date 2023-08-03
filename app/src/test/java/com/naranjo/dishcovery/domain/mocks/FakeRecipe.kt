@@ -65,6 +65,7 @@ internal val fakeRecipe = Recipe(
             )
         )
     ),
+    isFavorite = false,
     location = Location(
         latitude = 1.0,
         longitude = 1.0
