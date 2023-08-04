@@ -15,7 +15,7 @@ import kotlinx.coroutines.flow.consumeAsFlow
 import kotlinx.coroutines.launch
 import java.util.concurrent.CancellationException
 
-abstract class BaseViewModel<I>: ViewModel() {
+open class BaseViewModel<I>: ViewModel() {
     val intent = Channel<I>(Channel.UNLIMITED)
 
     private val _navigation = MutableSharedFlow<NavigationCommand>()

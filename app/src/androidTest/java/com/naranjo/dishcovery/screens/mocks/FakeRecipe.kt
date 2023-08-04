@@ -1,4 +1,5 @@
-package com.naranjo.dishcovery.data.mocks
+package com.naranjo.dishcovery.screens.mocks
+
 
 import com.naranjo.dishcovery.domain.entities.AnalyzedInstruction
 import com.naranjo.dishcovery.domain.entities.Equipment

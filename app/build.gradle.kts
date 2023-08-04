@@ -1,3 +1,5 @@
+import com.android.build.gradle.BaseExtension
+
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
@@ -20,7 +22,7 @@ android {
         versionName = "1.0"
         android.buildFeatures.buildConfig = true
 
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner = "com.naranjo.dishcovery.screens.utils.CustomTestRunner"
 
         buildConfigField("String", "BASE_URL", "\"http://54.157.232.127:8000/v1/\"")
 
@@ -59,12 +61,16 @@ android {
     packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
+            excludes += "/META-INF/LICENSE.md"
+            excludes += "/META-INF/LICENSE-notice.md"
+        }
+        jniLibs {
+            useLegacyPackaging = true
         }
     }
 }
 
 dependencies {
-
     implementation("androidx.core:core-ktx:1.10.1")
 
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.1")
@@ -107,14 +113,35 @@ dependencies {
     testImplementation("org.mockito:mockito-core:5.4.0")
     testImplementation("org.mockito:mockito-inline:5.2.0")
     testImplementation("org.mockito.kotlin:mockito-kotlin:5.0.0")
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.3")
+    testImplementation("androidx.room:room-testing:2.5.2")
+    testImplementation("app.cash.turbine:turbine:0.11.0")
 
+    androidTestImplementation("androidx.test:core:1.4.0")
+    androidTestImplementation("androidx.test:core-ktx:1.4.0")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
+    androidTestImplementation("androidx.test:rules:1.5.0")
+    androidTestImplementation("androidx.test:runner:1.5.2")
+    androidTestImplementation("android.arch.core:core-testing:1.1.1")
+    androidTestImplementation("io.mockk:mockk-android:1.13.5")
+
+    androidTestImplementation("androidx.fragment:fragment-testing:1.6.1")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
+    androidTestImplementation("androidx.test.espresso:espresso-contrib:3.5.1")
+    androidTestImplementation("androidx.test.espresso:espresso-intents:3.5.1")
+    androidTestImplementation("androidx.test.espresso:espresso-web:3.5.1")
     androidTestImplementation(platform("androidx.compose:compose-bom:2023.06.01"))
     androidTestImplementation("androidx.compose.ui:ui-test-junit4")
 
+    androidTestImplementation("com.google.dagger:hilt-android-testing:2.38.1")
+    androidTestImplementation("com.google.truth:truth:1.0.1")
+
+    kaptTest("com.google.dagger:hilt-android-compiler:2.47")
+    kaptAndroidTest("com.google.dagger:hilt-android-compiler:2.47")
+
     debugImplementation("androidx.compose.ui:ui-tooling")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
+    debugImplementation("androidx.test:monitor:1.6.1")
 }
 
 kapt {

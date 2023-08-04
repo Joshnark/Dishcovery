@@ -1,7 +1,21 @@
 <resources>
     <string name="app_name">DishCovery</string>
 
+    <!-- Splash -->
+
+    <string name="splash_content_description">Splash image</string>
+    <string name="splash_navigation_button_tag">splashNavigationButton</string>
+
+    <string name="splash_label">Not with +100 recipes!</string>
+    <string name="dishcovery_title">Dishcovery</string>
+    <string name="dishcovery_subtitle">Make your own food</string>
+    <string name="dishcovery_subtitle2">stay at home</string>
+    <string name="splash_navigation_button_text">Start cooking!</string>
+
     <!-- Main -->
+
+    <string name="main_pager_tag">MainFragmentPager</string>
+    <string name="main_tab_tag">MainFragmentTab%1$s</string>
 
     <string name="popular">Popular</string>
     <string name="main_course">Main C.</string>
@@ -13,5 +27,32 @@
     <string name="drink">Drink</string>
 
     <string name="main_course_complete">Main Course</string>
+
+    <!-- Home -->
+
+    <string name="home_screen_tag">HomeScreen</string>
+    <string name="home_header_title">"What would you like \nto cook today?"</string>
+
+    <!-- Search -->
+
+    <string name="search_screen_tag">SearchScreen</string>
+    <string name="search_any_recipe">Search any recipe!</string>
+
+    <!-- Favorites -->
+
+    <string name="favorite_screen_tag">FavoriteScreen</string>
+
+    <string name="favorites_header_title">Your favourites recipes!</string>
+    <string name="added_to_favorites">Added to favorites</string>
+    <string name="removed_from_favorites">Removed from favorites</string>
+
+    <!-- Detail -->
+
+    <string name="open_map">Open map to recipe country</string>
+    <string name="recipe_source_by">By %1$s</string>
+    <string name="description">Description</string>
+    <string name="ingredients">Ingredients</string>
+    <string name="equipment">Equipment</string>
+    <string name="steps">Steps</string>
 
 </resources>

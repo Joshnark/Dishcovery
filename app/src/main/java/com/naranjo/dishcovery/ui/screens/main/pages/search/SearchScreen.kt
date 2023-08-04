@@ -29,8 +29,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.naranjo.dishcovery.R
+import com.naranjo.dishcovery.domain.entities.Recipe
 import com.naranjo.dishcovery.ui.screens.main.views.RecipePreviewItem
 import com.naranjo.dishcovery.ui.screens.main.views.RecipesFetchError
 import com.naranjo.dishcovery.ui.screens.main.views.RecipesLoading
@@ -41,12 +45,15 @@ import com.naranjo.dishcovery.ui.views.SmallSpacer
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
+private const val GRID_CELL_COUNT = 2
+
 @Composable
-fun SearchScreen(viewModel: SearchViewModel = viewModel()) {
+fun SearchScreen(viewModel: SearchViewModel = viewModel(), onRecipeTap: (Recipe) -> Unit) {
     AddedFavoritesLaunchedEffect(viewModel)
 
     Scaffold(
         modifier = Modifier
+            .testTag(stringResource(id = R.string.search_screen_tag))
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
     ) { padding ->
@@ -59,7 +66,7 @@ fun SearchScreen(viewModel: SearchViewModel = viewModel()) {
                 contentPadding = PaddingValues(MEDIUM.dp),
                 verticalArrangement = Arrangement.spacedBy(TINY.dp),
                 horizontalArrangement = Arrangement.spacedBy(TINY.dp),
-                columns = GridCells.Fixed(2)
+                columns = GridCells.Fixed(GRID_CELL_COUNT)
             ) {
                 item(
                     span = {
@@ -70,7 +77,7 @@ fun SearchScreen(viewModel: SearchViewModel = viewModel()) {
                 }
 
                 when(val searchState = state.value) {
-                    is SearchState.LoadRecipes -> recipeList(searchState, viewModel)
+                    is SearchState.LoadRecipes -> recipeList(searchState, viewModel, onRecipeTap)
                     is SearchState.Error -> RecipesFetchError()
                     else -> RecipesLoading()
                 }
@@ -85,9 +92,9 @@ fun AddedFavoritesLaunchedEffect(viewModel: SearchViewModel) {
     LaunchedEffect(Unit) {
         viewModel.changedFavoriteState.collect {
             val text = if (it.isFavorite == true) {
-                "Added to favorites"
+                context.getString(R.string.added_to_favorites)
             } else {
-                "Removed from favorites"
+                context.getString(R.string.removed_from_favorites)
             }
 
             Toast.makeText(context, text, Toast.LENGTH_SHORT).show()
@@ -95,7 +102,7 @@ fun AddedFavoritesLaunchedEffect(viewModel: SearchViewModel) {
     }
 }
 
-private fun LazyGridScope.recipeList(searchState: SearchState.LoadRecipes, viewModel: SearchViewModel) {
+private fun LazyGridScope.recipeList(searchState: SearchState.LoadRecipes, viewModel: SearchViewModel, onRecipeTap: (Recipe) -> Unit) {
     items(searchState.recipes) { recipe ->
         val scope = rememberCoroutineScope()
 
@@ -105,6 +112,9 @@ private fun LazyGridScope.recipeList(searchState: SearchState.LoadRecipes, viewM
                 scope.launch {
                     viewModel.intent.send(SearchIntent.ChangeFavorite(recipe = recipe))
                 }
+            },
+            onTap = {
+                onRecipeTap.invoke(recipe)
             }
         )
     }
@@ -120,7 +130,7 @@ private fun Header(viewModel: SearchViewModel = viewModel()) {
     ) {
         SearchTextField(
             text = keyword,
-            placeholder = "Search any recipe!",
+            placeholder = stringResource(id = R.string.search_any_recipe),
             onValueChanged = { newValue ->
                 keyword = newValue
 

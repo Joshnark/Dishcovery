@@ -24,6 +24,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -33,6 +34,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.naranjo.dishcovery.R
 import com.naranjo.dishcovery.domain.entities.Recipe
 import com.naranjo.dishcovery.ui.screens.main.MainViewModel
 import com.naranjo.dishcovery.ui.screens.main.pages.search.SearchIntent
@@ -57,6 +59,7 @@ fun HomeScreen(
 
     Scaffold(
         modifier = Modifier
+            .testTag(stringResource(id = R.string.home_screen_tag))
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
     ) { padding ->
@@ -95,9 +98,9 @@ fun AddedFavoritesLaunchedEffect(viewModel: HomeViewModel) {
     LaunchedEffect(Unit) {
         viewModel.changedFavoriteState.collect {
             val text = if (it.isFavorite == true) {
-                "Added to favorites"
+                context.getString(R.string.added_to_favorites)
             } else {
-                "Removed from favorites"
+                context.getString(R.string.removed_from_favorites)
             }
 
             Toast.makeText(context, text, Toast.LENGTH_SHORT).show()
@@ -135,15 +138,15 @@ private fun Header(mainViewModel: MainViewModel = viewModel(), searchViewModel: 
         modifier = Modifier.fillMaxSize()
     ) {
         Text(
-            text = "What would you like \nto cook today?",
-            style = TextStyle(fontSize = 28.sp, fontWeight = FontWeight.Bold)
+            text = stringResource(id = R.string.home_header_title),
+            style = MaterialTheme.typography.titleLarge
         )
 
         SmallSpacer()
 
         SearchTextField(
-            text = "",
-            placeholder = "Search any recipe!",
+            text = String(),
+            placeholder = stringResource(id = R.string.search_any_recipe),
             readOnly = true,
             modifier = Modifier.clickable {
                 scope.launch {

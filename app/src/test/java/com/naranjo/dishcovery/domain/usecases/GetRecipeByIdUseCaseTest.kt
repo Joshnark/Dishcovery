@@ -1,6 +1,6 @@
 package com.naranjo.dishcovery.domain.usecases
 
-import com.naranjo.dishcovery.domain.mocks.fakeRecipe
+import com.naranjo.dishcovery.mocks.fakeRecipe
 import com.naranjo.dishcovery.domain.repositories.RecipesRepository
 import com.naranjo.dishcovery.interactor.recipes.GetRecipeByIdUseCase
 import kotlinx.coroutines.runBlocking
@@ -34,15 +34,21 @@ class GetRecipeByIdUseCaseTest {
 
     @Test
     fun `On getRecipeById invoked Given success fetching data Returns Recipe`() = runBlocking {
-        doReturn(fakeRecipe).`when`(mockRecipesRepository).getRecipeById(idArgumentCaptor.capture() ?: Int.MAX_VALUE)
+        doReturn(Result.success(fakeRecipe)).`when`(mockRecipesRepository).getRecipeById(idArgumentCaptor.capture() ?: Int.MAX_VALUE)
+
         val result = sut.invoke(fakeRecipe.id)
-        Assert.assertEquals(fakeRecipe, result)
+
+        assert(result.isSuccess)
+        Assert.assertEquals(fakeRecipe, result.getOrThrow())
     }
 
     @Test(expected = Exception::class)
     fun `On getRecipeById invoked Given failure fetching data Throws error`(): Unit = runBlocking {
         doThrow(Exception()).`when`(mockRecipesRepository).getRecipeById(any())
-        sut.invoke(1)
+
+        val result = sut.invoke(fakeRecipe.id)
+
+        assert(result.isFailure)
     }
 
 }

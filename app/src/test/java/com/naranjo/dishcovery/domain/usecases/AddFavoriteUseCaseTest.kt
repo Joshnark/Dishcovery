@@ -1,6 +1,6 @@
 package com.naranjo.dishcovery.domain.usecases
 
-import com.naranjo.dishcovery.domain.mocks.fakeRecipe
+import com.naranjo.dishcovery.mocks.fakeRecipe
 import com.naranjo.dishcovery.domain.entities.Recipe
 import com.naranjo.dishcovery.domain.repositories.FavoritesRepository
 import com.naranjo.dishcovery.interactor.favorites.ChangeFavoriteUseCase
@@ -39,7 +39,9 @@ class AddFavoriteUseCaseTest {
     @Test
     fun `On changeFavorite invoked Given success Executes repository changeFavorite and results in success`(): Unit = runBlocking {
         doReturn(true).`when`(mockFavoritesRepository).changeFavorite(recipeArgumentCaptor.capture() ?: fakeRecipe)
+
         val result = sut.invoke(fakeRecipe)
+
         verify(mockFavoritesRepository, times(1)).changeFavorite(any())
         Assert.assertEquals(fakeRecipe, recipeArgumentCaptor.value)
         assert(result.isSuccess)
@@ -49,6 +51,7 @@ class AddFavoriteUseCaseTest {
     @Test(expected = Exception::class)
     fun `On changeFavorite invoked Given failure fetching data Throws error`(): Unit = runBlocking {
         doThrow(Exception()).`when`(mockFavoritesRepository).changeFavorite(recipeArgumentCaptor.capture() ?: fakeRecipe)
+
         sut.invoke(fakeRecipe)
     }
 

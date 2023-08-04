@@ -1,6 +1,6 @@
 package com.naranjo.dishcovery.domain.usecases
 
-import com.naranjo.dishcovery.domain.mocks.fakeRecipe
+import com.naranjo.dishcovery.mocks.fakeRecipe
 import com.naranjo.dishcovery.domain.repositories.RecipesRepository
 import com.naranjo.dishcovery.interactor.recipes.GetRecipesByCategoryUseCase
 import kotlinx.coroutines.runBlocking
@@ -34,13 +34,20 @@ class GetRecipesByCategoryUseCaseTest {
     @Test
     fun `On getRecipesByCategory invoked Given success fetching data Returns Recipe List`() = runBlocking {
         val fakeResult = List(10) { _ -> fakeRecipe }
-        doReturn(fakeResult).`when`(mockRecipesRepository).getRecipesByCategory(categoryArgumentCaptor.capture().orEmpty())
-        val result = sut.invoke("1")
+        val fakeCategory = "elevenses"
+
+        doReturn(Result.success(fakeResult)).`when`(mockRecipesRepository).getRecipesByCategory(categoryArgumentCaptor.capture().orEmpty())
+
+        val result = sut.invoke(fakeCategory)
+
+        Assert.assertArrayEquals(result.getOrThrow().toTypedArray(), fakeResult.toTypedArray())
+        Assert.assertEquals(categoryArgumentCaptor.value, fakeCategory)
     }
 
     @Test(expected = Exception::class)
     fun `On getRecipesByCategory invoked Given failure fetching data Throws error`(): Unit = runBlocking {
         doThrow(Exception()).`when`(mockRecipesRepository).getRecipesByCategory(categoryArgumentCaptor.capture().orEmpty())
+
         sut.invoke("1")
     }
 

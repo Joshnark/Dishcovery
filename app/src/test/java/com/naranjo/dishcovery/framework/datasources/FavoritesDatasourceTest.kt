@@ -1,11 +1,12 @@
 package com.naranjo.dishcovery.framework.datasources
 
 import com.naranjo.dishcovery.data.datasources.FavoritesDataSource
-import com.naranjo.dishcovery.domain.mocks.fakeRecipe
+import com.naranjo.dishcovery.mocks.fakeRecipe
 import com.naranjo.dishcovery.domain.entities.Recipe
 import com.naranjo.dishcovery.domain.repositories.FavoritesRepository
 import com.naranjo.dishcovery.framework.persistence.FavoriteRecipesDao
 import com.naranjo.dishcovery.framework.persistence.RecipeEntity
+import com.naranjo.dishcovery.framework.utils.toRecipe
 import com.naranjo.dishcovery.framework.utils.toRecipeEntity
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert
@@ -30,6 +31,9 @@ class FavoritesDatasourceTest {
     @Captor
     private lateinit var recipeArgumentCaptor: ArgumentCaptor<RecipeEntity>
 
+    @Captor
+    private lateinit var idArgumentCaptor: ArgumentCaptor<Int>
+
     private lateinit var sut: FavoritesDataSource
 
     @Before
@@ -40,39 +44,70 @@ class FavoritesDatasourceTest {
     @Test
     fun `On addFavorite invoked Given success fetching data Executes datasource addFavorite`() = runBlocking {
         doReturn(Unit).`when`(favoritesDao).insert(recipeArgumentCaptor.capture() ?: fakeRecipe.toRecipeEntity())
+
         sut.addFavorite(fakeRecipe)
+
+        Assert.assertEquals(recipeArgumentCaptor.value.id, fakeRecipe.id)
     }
 
     @Test(expected = Exception::class)
     fun `On addFavorite invoked Given failure fetching data Throws error`(): Unit = runBlocking {
         doThrow(Exception()).`when`(favoritesDao).insert(recipeArgumentCaptor.capture() ?: fakeRecipe.toRecipeEntity())
+
         sut.addFavorite(fakeRecipe)
     }
 
     @Test
     fun `On removeFavorite invoked Given success fetching data Executes datasource addFavorite`(): Unit = runBlocking {
         doReturn(Unit).`when`(favoritesDao).delete(recipeArgumentCaptor.capture() ?: fakeRecipe.toRecipeEntity())
+
         sut.removeFavorite(fakeRecipe)
+
+        Assert.assertEquals(recipeArgumentCaptor.value.id, fakeRecipe.id)
     }
 
     @Test(expected = Exception::class)
     fun `On removeFavorite invoked Given failure fetching data Throws error`(): Unit = runBlocking {
         doThrow(Exception()).`when`(favoritesDao).delete(recipeArgumentCaptor.capture() ?: fakeRecipe.toRecipeEntity())
+
         sut.addFavorite(fakeRecipe)
     }
 
     @Test
     fun `On getFavorites invoked Given success fetching data Returns Recipe List`() = runBlocking {
         val fakeResult = List(10) { _ -> fakeRecipe.toRecipeEntity() }
+
         doReturn(fakeResult).`when`(favoritesDao).selectAll()
+
         val result = sut.getFavorites().map(Recipe::toRecipeEntity)
+
         Assert.assertArrayEquals(fakeResult.toTypedArray(), result.toTypedArray())
     }
 
     @Test(expected = Exception::class)
     fun `On getFavorites invoked Given failure fetching data Throws error`(): Unit = runBlocking {
         doThrow(Exception()).`when`(favoritesDao).selectAll()
+
         sut.getFavorites()
     }
+
+    @Test
+    fun `On getRecipe invoked Given success fetching data Returns Recipe`() = runBlocking {
+        val fakeResult = fakeRecipe.toRecipeEntity()
+
+        doReturn(listOf(fakeResult)).`when`(favoritesDao).select(idArgumentCaptor.capture())
+
+        val result = sut.getRecipe(fakeRecipe).map(Recipe::toRecipeEntity)
+
+        Assert.assertEquals(fakeResult, result.first())
+    }
+
+    @Test(expected = Exception::class)
+    fun `On getRecipe invoked Given failure fetching data Throws error`(): Unit = runBlocking {
+        doThrow(Exception()).`when`(favoritesDao).selectAll()
+
+        sut.getFavorites()
+    }
+
 
 }

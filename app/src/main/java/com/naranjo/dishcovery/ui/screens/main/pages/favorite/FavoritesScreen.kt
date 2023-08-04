@@ -30,12 +30,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.naranjo.dishcovery.R
+import com.naranjo.dishcovery.domain.entities.Recipe
 import com.naranjo.dishcovery.ui.screens.main.views.RecipePreviewItem
 import com.naranjo.dishcovery.ui.screens.main.views.RecipesFetchError
 import com.naranjo.dishcovery.ui.screens.main.views.RecipesLoading
@@ -47,11 +50,12 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @Composable
-fun FavoritesScreen(viewModel: FavoritesViewModel = viewModel()) {
+fun FavoritesScreen(viewModel: FavoritesViewModel = viewModel(), onRecipeTap: (Recipe) -> Unit) {
     AddedFavoritesLaunchedEffect(viewModel)
 
     Scaffold(
         modifier = Modifier
+            .testTag(stringResource(id = R.string.favorite_screen_tag))
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
     ) { padding ->
@@ -75,7 +79,7 @@ fun FavoritesScreen(viewModel: FavoritesViewModel = viewModel()) {
                 }
 
                 when(val searchState = state.value) {
-                    is FavoritesState.LoadRecipes -> recipeList(searchState, viewModel)
+                    is FavoritesState.LoadRecipes -> recipeList(searchState, viewModel, onRecipeTap)
                     is FavoritesState.Error -> RecipesFetchError()
                     else -> RecipesLoading()
                 }
@@ -90,9 +94,9 @@ fun AddedFavoritesLaunchedEffect(viewModel: FavoritesViewModel) {
     LaunchedEffect(Unit) {
         viewModel.changedFavoriteState.collect {
             val text = if (it.isFavorite == true) {
-                "Added to favorites"
+                context.getString(R.string.added_to_favorites)
             } else {
-                "Removed from favorites"
+                context.getString(R.string.removed_from_favorites)
             }
 
             Toast.makeText(context, text, Toast.LENGTH_SHORT).show()
@@ -100,7 +104,7 @@ fun AddedFavoritesLaunchedEffect(viewModel: FavoritesViewModel) {
     }
 }
 
-private fun LazyGridScope.recipeList(searchState: FavoritesState.LoadRecipes, viewModel: FavoritesViewModel) {
+private fun LazyGridScope.recipeList(searchState: FavoritesState.LoadRecipes, viewModel: FavoritesViewModel, onRecipeTap: (Recipe) -> Unit) {
     items(searchState.recipes) { recipe ->
         val scope = rememberCoroutineScope()
 
@@ -110,6 +114,9 @@ private fun LazyGridScope.recipeList(searchState: FavoritesState.LoadRecipes, vi
                 scope.launch {
                     viewModel.intent.send(FavoritesIntent.ChangeFavorite(recipe = recipe))
                 }
+            },
+            onTap = {
+                onRecipeTap.invoke(recipe)
             }
         )
     }
@@ -121,8 +128,8 @@ private fun Header() {
         modifier = Modifier.fillMaxSize()
     ) {
         Text(
-            text = "Your favourites recipes!",
-            style = TextStyle(fontSize = 22.sp, fontWeight = FontWeight.Bold)
+            text = stringResource(id = R.string.favorites_header_title),
+            style = MaterialTheme.typography.titleMedium
         )
 
         SmallSpacer()

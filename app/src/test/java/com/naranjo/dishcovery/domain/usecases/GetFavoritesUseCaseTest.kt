@@ -1,6 +1,6 @@
 package com.naranjo.dishcovery.domain.usecases
 
-import com.naranjo.dishcovery.domain.mocks.fakeRecipe
+import com.naranjo.dishcovery.mocks.fakeRecipe
 import com.naranjo.dishcovery.domain.repositories.FavoritesRepository
 import com.naranjo.dishcovery.interactor.favorites.GetFavoritesUseCase
 import kotlinx.coroutines.runBlocking
@@ -29,14 +29,18 @@ class GetFavoritesUseCaseTest {
     @Test
     fun `On getFavorites invoked Given success fetching data Returns Recipe List`() = runBlocking {
         val fakeResult = List(10) { _ -> fakeRecipe }
+
         doReturn(Result.success(fakeResult)).`when`(mockFavoritesRepository).getFavorites()
+
         val result = sut.invoke()
+
         Assert.assertArrayEquals(result.getOrThrow().toTypedArray(), fakeResult.toTypedArray())
     }
 
     @Test(expected = Exception::class)
     fun `On getFavorites invoked Given failure fetching data Throws error`(): Unit = runBlocking {
         doThrow(Exception()).`when`(mockFavoritesRepository).getFavorites()
+
         sut.invoke()
     }
 }

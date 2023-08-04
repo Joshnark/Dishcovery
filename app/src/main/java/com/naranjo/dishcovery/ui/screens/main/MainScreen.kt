@@ -3,12 +3,17 @@ package com.naranjo.dishcovery.ui.screens.main
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
@@ -28,14 +33,18 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.snapshotFlow
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.naranjo.dishcovery.R
+import com.naranjo.dishcovery.ui.extensions.responsive
 import com.naranjo.dishcovery.ui.screens.main.models.PageData
 import com.naranjo.dishcovery.ui.screens.main.pages.favorite.FavoritesIntent
 import com.naranjo.dishcovery.ui.screens.main.pages.favorite.FavoritesScreen
@@ -58,7 +67,7 @@ private const val SEARCH_SCREEN_INDEX = 0
 private const val HOME_SCREEN_INDEX = 1
 private const val FAVORITES_SCREEN_INDEX = 2
 
-@OptIn(ExperimentalFoundationApi::class, ExperimentalStdlibApi::class)
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun MainScreen(viewModel: MainViewModel = viewModel()) {
 
@@ -66,19 +75,31 @@ fun MainScreen(viewModel: MainViewModel = viewModel()) {
         SEARCH_SCREEN_INDEX to PageData(
             outlineIcon = R.drawable.ic_search,
             selectedIcon = R.drawable.ic_search_selected,
-            screen = { SearchScreen() }
+            screen = { SearchScreen(
+                onRecipeTap = { recipe ->
+                    viewModel.navigate(MainFragmentDirections.actionMainFragmentToDetailFragment(recipe.id))
+                }
+            ) }
         ),
         HOME_SCREEN_INDEX to PageData(
             outlineIcon = R.drawable.ic_home,
             selectedIcon = R.drawable.ic_home_selected,
-            screen = { HomeScreen(onRecipeTap = { recipe ->
-                viewModel.navigate(MainFragmentDirections.actionMainFragmentToDetailFragment(recipe.id))
-            }) }
+            screen = {
+                HomeScreen(
+                    onRecipeTap = { recipe ->
+                        viewModel.navigate(MainFragmentDirections.actionMainFragmentToDetailFragment(recipe.id))
+                    }
+                )
+            }
         ),
         FAVORITES_SCREEN_INDEX to PageData(
             outlineIcon = R.drawable.ic_like,
             selectedIcon = R.drawable.ic_like_selected,
-            screen = { FavoritesScreen() }
+            screen = { FavoritesScreen(
+                onRecipeTap = { recipe ->
+                    viewModel.navigate(MainFragmentDirections.actionMainFragmentToDetailFragment(recipe.id))
+                }
+            ) }
         )
     )
 
@@ -105,12 +126,21 @@ fun MainScreen(viewModel: MainViewModel = viewModel()) {
             )
         },
     ) { padding ->
-        HorizontalPager(
-            state = pagerState,
-            modifier = Modifier.padding(padding),
-            userScrollEnabled = false
-        ) { pageIndex ->
-            pageData[pageIndex]?.screen?.invoke()
+        Box(
+            modifier = Modifier
+                .fillMaxSize(),
+            contentAlignment = Alignment.TopCenter
+        ) {
+            HorizontalPager(
+                state = pagerState,
+                modifier = Modifier
+                    .responsive()
+                    .padding(padding)
+                    .testTag(stringResource(id = R.string.main_pager_tag)),
+                userScrollEnabled = false
+            ) { pageIndex ->
+                pageData[pageIndex]?.screen?.invoke()
+            }
         }
     }
 }
@@ -143,6 +173,7 @@ fun TabBar(
     ) {
         pageData.forEach { (index, value) ->
             Tab(
+                modifier = Modifier.testTag(stringResource(R.string.main_tab_tag, index)),
                 selected = pagerState.currentPage == index,
                 onClick = {
                     scope.launch {

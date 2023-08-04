@@ -14,7 +14,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
@@ -26,6 +25,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -34,9 +34,9 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
+import com.naranjo.dishcovery.R
 import com.naranjo.dishcovery.domain.entities.Recipe
-import com.naranjo.dishcovery.fakeRecipe
-import com.naranjo.dishcovery.ui.theme.LARGE
+import com.naranjo.dishcovery.ui.extensions.responsive
 import com.naranjo.dishcovery.ui.theme.MEDIUM
 import com.naranjo.dishcovery.ui.theme.SMALL
 import com.naranjo.dishcovery.ui.views.ErrorView
@@ -48,13 +48,16 @@ import com.naranjo.dishcovery.ui.views.SmallSpacer
 import com.naranjo.dishcovery.ui.views.TinySpacer
 import kotlinx.coroutines.launch
 
+private const val RECIPE_NAME_SIZE = 18
+private const val RECIPE_SOURCE_SIZE = 14
+
 @Composable
 fun DetailScreen(detailViewModel: DetailViewModel = viewModel()) {
     val state = detailViewModel.uiState.collectAsState()
 
     Scaffold { padding ->
         Box(
-            modifier = Modifier.padding(padding)
+            modifier = Modifier.padding(padding),
         ) {
            when(val value = state.value) {
                is DetailState.LoadRecipe -> DetailRecipe(recipe = value.recipe)
@@ -78,7 +81,8 @@ private fun DetailRecipe(recipe: Recipe, viewModel: DetailViewModel = viewModel(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .verticalScroll(scrollState)
+                .verticalScroll(scrollState),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Header(recipe)
 
@@ -95,7 +99,7 @@ private fun DetailRecipe(recipe: Recipe, viewModel: DetailViewModel = viewModel(
                 }
             }
         ) {
-            Text("Open map to recipe country")
+            Text(stringResource(id = R.string.open_map))
         }
     }
 }
@@ -106,7 +110,7 @@ private fun Header(recipe: Recipe) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .aspectRatio(1f)
+            .fillMaxHeight(0.4f)
             .background(MaterialTheme.colorScheme.surfaceVariant)
     ) {
         if (recipe.image.isNotEmpty()) {
@@ -133,26 +137,27 @@ private fun Body(recipe: Recipe) {
 
     Column(
         modifier = Modifier
+            .responsive()
             .background(MaterialTheme.colorScheme.surface)
-            .padding(MEDIUM.dp)
+            .padding(MEDIUM.dp),
     ) {
         LargeSpacer()
 
         Text(
             text = recipe.title,
-            style = TextStyle(fontSize = 18.sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurface)
+            style = TextStyle(fontSize = RECIPE_NAME_SIZE.sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurface)
         )
         TinySpacer()
         Text(
-            text = "By ${recipe.sourceName}",
-            style = TextStyle(fontSize = 14.sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurfaceVariant)
+            text = stringResource(id = R.string.recipe_source_by, recipe.sourceName),
+            style = TextStyle(fontSize = RECIPE_SOURCE_SIZE.sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurfaceVariant)
         )
 
         MediumSpacer()
 
         Text(
-            text = "Description",
-            style = TextStyle(fontSize = 17.sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurface)
+            text = stringResource(id = R.string.description),
+            style = MaterialTheme.typography.titleSmall
         )
         TinySpacer()
         HtmlText(
@@ -163,7 +168,7 @@ private fun Body(recipe: Recipe) {
 
         if (ingredients.isNotEmpty()) {
             Text(
-                text = "Ingredients",
+                text = stringResource(id = R.string.ingredients),
                 style = TextStyle(fontSize = 18.sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurface)
             )
             SmallSpacer()
@@ -178,8 +183,8 @@ private fun Body(recipe: Recipe) {
 
         if(equipments.isNotEmpty()) {
             Text(
-                text = "Equipment",
-                style = TextStyle(fontSize = 17.sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurface)
+                text = stringResource(id = R.string.equipment),
+                style = MaterialTheme.typography.titleSmall
             )
             SmallSpacer()
             Column {
@@ -192,8 +197,8 @@ private fun Body(recipe: Recipe) {
         MediumSpacer()
 
         Text(
-            text = "Steps",
-            style = TextStyle(fontSize = 17.sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurface)
+            text = stringResource(id = R.string.steps),
+            style = MaterialTheme.typography.titleSmall
         )
         SmallSpacer()
         Column {
@@ -205,6 +210,9 @@ private fun Body(recipe: Recipe) {
         LargeSpacer()
     }
 }
+
+private const val RECIPE_ELEMENT_TEXT_SIZE = 14
+private const val SEPARATOR_SIZE = 1
 
 @Composable
 private fun RecipeElement(index: Int, name: String, isLast: Boolean) {
@@ -224,7 +232,7 @@ private fun RecipeElement(index: Int, name: String, isLast: Boolean) {
             ) {
                 Text(
                     text = (index + 1).toString(),
-                    style = TextStyle(fontSize = 14.sp, color = MaterialTheme.colorScheme.onSurface, fontWeight = FontWeight.Bold)
+                    style = TextStyle(fontSize = RECIPE_ELEMENT_TEXT_SIZE.sp, color = MaterialTheme.colorScheme.onSurface, fontWeight = FontWeight.Bold)
                 )
             }
 
@@ -237,7 +245,7 @@ private fun RecipeElement(index: Int, name: String, isLast: Boolean) {
             ) {
                 Text(
                     text = name,
-                    style = TextStyle(fontSize = 14.sp, color = MaterialTheme.colorScheme.onSurfaceVariant, fontWeight = FontWeight.SemiBold)
+                    style = TextStyle(fontSize = RECIPE_ELEMENT_TEXT_SIZE.sp, color = MaterialTheme.colorScheme.onSurfaceVariant, fontWeight = FontWeight.SemiBold)
                 )
             }
         }
@@ -248,19 +256,13 @@ private fun RecipeElement(index: Int, name: String, isLast: Boolean) {
             Spacer(
                 modifier = Modifier
                     .fillMaxSize()
-                    .height(1.dp)
+                    .height(SEPARATOR_SIZE.dp)
                     .background(MaterialTheme.colorScheme.surfaceVariant)
             )
         }
     }
 
     SmallSpacer()
-}
-
-@Preview
-@Composable
-fun PreviewDetailRecipe() {
-    DetailRecipe(fakeRecipe)
 }
 
 @Preview

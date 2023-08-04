@@ -18,7 +18,9 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -31,6 +33,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.naranjo.dishcovery.R
 import com.naranjo.dishcovery.ui.views.LargeSpacer
 import com.naranjo.dishcovery.ui.views.GradientBox
+import com.naranjo.dishcovery.ui.views.MediumSpacer
 
 private const val BOTTOM_SEPARATION = 50
 
@@ -43,7 +46,7 @@ fun SplashScreen() {
             Image(
                 painter = painterResource(id = R.drawable.img_splash),
                 modifier = Modifier.fillMaxSize(),
-                contentDescription = "Splash image",
+                contentDescription = stringResource(id = R.string.splash_content_description),
                 contentScale = ContentScale.Crop
             )
 
@@ -60,10 +63,7 @@ fun SplashScreen() {
 private fun Header() {
     val offset = Offset(.0f, 5.0f)
 
-    val labelStyle = TextStyle(
-        color = Color.White,
-        fontWeight = FontWeight.Bold,
-        fontSize = 18.sp,
+    val textStyle = MaterialTheme.typography.headlineSmall.copy(
         shadow = Shadow(
             color = Color.Black, offset = offset, blurRadius = 2f
         )
@@ -74,40 +74,18 @@ private fun Header() {
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Spacer(modifier = Modifier.size(20.dp))
+        MediumSpacer()
 
         Text(
-            text = buildAnnotatedString {
-                append("Now with ")
-                withStyle(
-                    SpanStyle(
-                        color = MaterialTheme.colorScheme.primary,
-                        fontWeight = FontWeight.Bold,
-                        shadow = Shadow(
-                            color = Color.Black, offset = offset, blurRadius = 2f
-                        )
-                    )
-                ) {
-                    append("+100")
-                }
-                append(" Recipes!")
-            },
-            style = labelStyle
+            text = stringResource(R.string.splash_label),
+            style = textStyle
         )
     }
 }
 
 @Composable
 private fun Footer() {
-    val titleStyle = TextStyle(
-        color = Color.White,
-        fontSize = 45.sp
-    )
-
-    val captionsStyle = TextStyle(
-        color = Color.White,
-        fontSize = 25.sp
-    )
+    val captionsStyle =
 
     Column (
         modifier = Modifier.fillMaxSize(),
@@ -115,20 +93,20 @@ private fun Footer() {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
-            text = "Dishcovery",
-            style = titleStyle
+            text = stringResource(id = R.string.dishcovery_title),
+            style = MaterialTheme.typography.headlineLarge
         )
 
         LargeSpacer()
 
         Text(
-            text = "Make your own food",
-            style = captionsStyle
+            text = stringResource(id = R.string.dishcovery_subtitle),
+            style = MaterialTheme.typography.headlineMedium
         )
 
         Text(
-            text = "stay at home",
-            style = captionsStyle
+            text = stringResource(id = R.string.dishcovery_subtitle2),
+            style = MaterialTheme.typography.headlineMedium
         )
 
         LargeSpacer()
@@ -143,11 +121,12 @@ private fun Footer() {
 @Composable
 private fun StartButton(viewModel: SplashViewModel = viewModel()) {
     Button(
+        modifier = Modifier.testTag(stringResource(id = R.string.splash_navigation_button_tag)),
         onClick = {
             viewModel.navigate(SplashFragmentDirections.actionSplashFragmentToMainFragment())
         }
     ) {
-        Text(text = "Start cooking!")
+        Text(text = stringResource(id = R.string.splash_navigation_button_text))
     }
 }
 

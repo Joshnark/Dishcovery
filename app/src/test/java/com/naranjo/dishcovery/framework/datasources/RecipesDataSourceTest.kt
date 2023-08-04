@@ -1,8 +1,7 @@
 package com.naranjo.dishcovery.framework.datasources
 
 import com.naranjo.dishcovery.data.datasources.RecipesDataSource
-import com.naranjo.dishcovery.domain.mocks.fakeRecipe
-import com.naranjo.dishcovery.domain.repositories.RecipesRepository
+import com.naranjo.dishcovery.mocks.fakeRecipe
 import com.naranjo.dishcovery.framework.network.RecipesApi
 import com.naranjo.dishcovery.framework.utils.Response
 import kotlinx.coroutines.runBlocking
@@ -31,6 +30,9 @@ class RecipesDataSourceTest {
     @Captor
     private lateinit var categoryArgumentCaptor: ArgumentCaptor<String>
 
+    @Captor
+    private lateinit var keywordArgumentCaptor: ArgumentCaptor<String>
+
     private lateinit var sut: RecipesDataSource
 
     @Before
@@ -40,19 +42,23 @@ class RecipesDataSourceTest {
 
     @Test
     fun `On getRecipes Given success fetching data Returns Recipe List`() = runBlocking {
-        val fakeResult = List(10) { _ -> fakeRecipe }
+        val fakeResult = List(1) { _ -> fakeRecipe }
         val fakeResponse = Response(
             data = fakeResult,
             errorMessage = null
         )
+
         doReturn(fakeResponse).`when`(mockRecipesApi).getRecipes()
+
         val result = sut.getRecipes()
+
         Assert.assertArrayEquals(fakeResult.toTypedArray(), result.toTypedArray())
     }
 
     @Test(expected = Exception::class)
     fun `On getRecipes Given failure fetching data Throws error`(): Unit = runBlocking {
         doThrow(Exception()).`when`(mockRecipesApi).getRecipes()
+
         sut.getRecipes()
     }
 
@@ -63,7 +69,9 @@ class RecipesDataSourceTest {
             errorMessage = null
         )
         doReturn(fakeResponse).`when`(mockRecipesApi).getRecipeById(idArgumentCaptor.capture() ?: Int.MIN_VALUE)
+
         val result = sut.getRecipeById(fakeRecipe.id)
+
         Assert.assertEquals(fakeRecipe, result)
     }
 
@@ -75,38 +83,73 @@ class RecipesDataSourceTest {
 
     @Test
     fun `On getPopularRecipes Given success fetching data Returns Recipe List`() = runBlocking {
-        val fakeResult = List(10) { _ -> fakeRecipe }
+        val fakeResult = List(1) { _ -> fakeRecipe }
         val fakeResponse = Response(
             data = fakeResult,
             errorMessage = null
         )
+
         doReturn(fakeResponse).`when`(mockRecipesApi).getRecipes(isPopular = true)
+
         val result = sut.getPopularRecipes()
+
         Assert.assertArrayEquals(fakeResult.toTypedArray(), result.toTypedArray())
     }
 
     @Test(expected = Exception::class)
     fun `On getPopularRecipes Given failure fetching data Throws error`(): Unit = runBlocking {
         doThrow(Exception()).`when`(mockRecipesApi).getRecipes(isPopular = true)
+
         sut.getPopularRecipes()
     }
 
     @Test
-    fun `On getRecipesByCategory Given success fetching data Returns Recipe List`() = runBlocking {
-        val fakeResult = List(10) { _ -> fakeRecipe }
+    fun `On searchRecipes Given success fetching data Returns Recipe List`() = runBlocking {
+        val fakeResult = List(1) { _ -> fakeRecipe }
         val fakeResponse = Response(
             data = fakeResult,
             errorMessage = null
         )
-        doReturn(fakeResponse).`when`(mockRecipesApi).getRecipes(isPopular = anyOrNull(), category = categoryArgumentCaptor.capture().orEmpty())
-        val result = sut.getRecipesByCategory("1")
+        val fakeKeyword = "chicken"
+
+        doReturn(fakeResponse).`when`(mockRecipesApi).getRecipes(isPopular = anyOrNull(), keyword = keywordArgumentCaptor.capture().orEmpty(), category = anyOrNull())
+
+        val result = sut.searchRecipes(fakeKeyword)
+
+        Assert.assertEquals(keywordArgumentCaptor.value, fakeKeyword)
+        Assert.assertArrayEquals(fakeResult.toTypedArray(), result.toTypedArray())
+    }
+
+    @Test(expected = Exception::class)
+    fun `On searchRecipes Given failure fetching data Throws error`(): Unit = runBlocking {
+        doThrow(Exception()).`when`(mockRecipesApi).getRecipes(isPopular = anyOrNull(), keyword = keywordArgumentCaptor.capture().orEmpty(), category = anyOrNull())
+        val fakeKeyword = "chicken"
+
+        sut.searchRecipes(fakeKeyword)
+    }
+
+    @Test
+    fun `On getRecipesByCategory Given success fetching data Returns Recipe List`() = runBlocking {
+        val fakeResult = List(1) { _ -> fakeRecipe }
+        val fakeResponse = Response(
+            data = fakeResult,
+            errorMessage = null
+        )
+        val fakeCategory = "elevenses"
+
+        doReturn(fakeResponse).`when`(mockRecipesApi).getRecipes(isPopular = anyOrNull(), keyword = anyOrNull(), category = categoryArgumentCaptor.capture().orEmpty())
+
+        val result = sut.getRecipesByCategory(fakeCategory)
+
         Assert.assertArrayEquals(fakeResult.toTypedArray(), result.toTypedArray())
     }
 
     @Test(expected = Exception::class)
     fun `On getRecipesByCategory Given failure fetching data Throws error`(): Unit = runBlocking {
-        doThrow(Exception()).`when`(mockRecipesApi).getRecipes(isPopular = anyOrNull(), category = categoryArgumentCaptor.capture().orEmpty())
-        sut.getRecipesByCategory("1")
+        doThrow(Exception()).`when`(mockRecipesApi).getRecipes(isPopular = anyOrNull(), keyword = anyOrNull(), category = categoryArgumentCaptor.capture().orEmpty())
+        val fakeCategory = "elevenses"
+
+        sut.getRecipesByCategory(fakeCategory)
     }
 
 }
